@@ -1,1 +1,1 @@
-# do-it-Django
+# do-it-django
