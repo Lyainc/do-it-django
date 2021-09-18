@@ -1,11 +1,15 @@
 from django.test import TestCase, Client
 from bs4 import BeautifulSoup
+from django.contrib.auth.models import User
 from .models import Post
 
 # Create your tests here.
 class TestView(TestCase):
     def setUp(self):
         self.client = Client()
+        self.user_test1 = User.objects.create_user(username="TEST1", password="password1")
+        self.user_test2 = User.objects.create_user(username="TEST2", password="password2")
+
 
     def navbar_test(self, soup):
         navbar = soup.nav
@@ -45,10 +49,12 @@ class TestView(TestCase):
         post_001 = Post.objects.create(
             title='첫 번째 포스트 입니다.',
             content='첫 번째 포스트의 상세 내용입니다.',
+            author=self.user_test1,
         )
         post_002 = Post.objects.create(
             title='두 번째 포스트입니다',
             content='두 번째 포스트의 상세 내용입니다.',
+            author=self.user_test2,
         )
         self.assertEqual(Post.objects.count(), 2)
 
@@ -62,12 +68,15 @@ class TestView(TestCase):
         self.assertIn(post_002.title, main_area.text)
         # 3.4 '아직 게시물이 없다'는 문구는 더 이상 보이지 않는다.
         self.assertNotIn('아직 게시물이 없습니다', main_area.text)
+        self.assertIn(self.user_test1.upper(), main_area.text)
+        self.assertIn(self.user_test2.upper(), main_area.text)
 
     def test_post_detail(self):
         # 1.1 포스트가 하나 있다.
         post_001 = Post.objects.create(
             title='첫 번째 포스트 입니다.',
             content='첫 번째 포스트의 상세 내용입니다.',
+            author=self.user_test1,
         )
         # 1.2 그 포스트의 url은 '/blog/1/'이다
         self.assertEqual(post_001.get_absolute_url(), '/blog/1/')
