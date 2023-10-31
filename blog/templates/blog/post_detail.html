@@ -2,7 +2,11 @@
 {% load static %}
 <html lang="ko">
     <head>
-        <title>{{ post.title }} - Blog</title>
+       <title>
+            {% block head_title%}
+                {{ post.title }} - Blog
+            {% endblock %}
+        </title>
         <link rel="stylesheet" href="{% static 'blog/bootstrap/bootstrap.min.css' %}" media="screen">
     </head>
     <body>
@@ -76,7 +80,7 @@
                             <p> {{ post.content }} </p>
                             {% if post.file_upload %}
                             <a href="{{ post.file_upload.url }}">
-                                <button class="btn btn-primary d-inline-flex align-items-center" type="button"> Download &nbsp;
+                                <button class="btn btn-primary d-inline-flex align-items-center" type="button">
                                     {% if post.get_file_ext == 'csv' %}
                                         <i class="fas fa-solid fa-file-csv"></i>&nbsp;
                                     {% elif post.get_file_ext == 'xlsx' or post.get_file_ext == 'xls' %}
@@ -88,7 +92,23 @@
                                     {% else %}
                                         <i class="fas fa-solid fa-file"></i>&nbsp;
                                     {% endif %}
+                                    Download:
                                     {{ post.get_file_name | truncatechars:10 }}
+                                    {% if post.get_file_ext == 'csv' %}
+                                        .csv
+                                    {% elif post.get_file_ext == 'xlsx' %}
+                                        .xlsx
+                                    {% elif post.get_file_ext == 'png' %} or 
+                                        .png
+                                    {% elif post.get_file_ext == 'jpeg' %}
+                                        .jpeg
+                                    {% elif post.get_file_ext == 'jpg' %}
+                                        .jpg
+                                    {% elif post.get_file_ext == 'pdf' %}  
+                                        .pdf
+                                    {% else %}
+                                        .file
+                                    {% endif %}
                                 </button>
                             </a>
                             {% endif %}

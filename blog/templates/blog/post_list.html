@@ -1,179 +1,29 @@
 <!DOCTYPE html>
+{% extends 'blog/base.html' %}
 {% load static %}
 <html lang="ko">
-    <head>
-        <title>Blog test page</title>
-        <link rel="stylesheet" href="{% static 'blog/bootstrap/bootstrap.min.css' %}" media="screen">
-    </head>
-    <body>
-        <nav class="navbar navbar-expand-lg bg-body-tertiary">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">Blog Test Page</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="./index.html">Home</a>
-                    </li>
-                    <li class="nav-item">
-                    <a class="nav-link" href="./blog_list.html">Blog</a>
-                    </li>
-                    <li class="nav-item">
-                    <a class="nav-link" href="./about_me.html">About me</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Dropdown
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Action</a></li>
-                        <li><a class="dropdown-item" href="#">Another action</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
-                    </ul>
-                    </li>
-                </ul>
-                <form class="d-flex" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>
-                <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#modalSignin">Log In</a>
-                    </li>
-                </ul>
-                </div>
-                
-            </div>
-        </nav>
-
-        <div class="modal fade" tabindex="-1" role="dialog" id="modalSignin" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content rounded-4 shadow">
-                    <div class="modal-header p-5 pb-4 border-bottom-0">
-                        <h1 class="fw-bold mb-0 fs-2" id="modalSigninLabel">Sign up for free</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body p-5 pt-0">
-                        <form class="" data-bitwarden-watching="1">
-                        <div class="form-floating mb-3">
-                            <input type="email" class="form-control rounded-3" id="floatingInput" placeholder="name@example.com">
-                            <label for="floatingInput">Email address</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <input type="password" class="form-control rounded-3" id="floatingPassword" placeholder="Password">
-                            <label for="floatingPassword">Password</label>
-                        </div>
-                        <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Sign up</button>
-                        <small class="text-muted">By clicking Sign up, you agree to the terms of use.</small>
-                        <hr class="my-4">
-                        <h2 class="fs-5 fw-bold mb-3">Or use a third-party</h2>
-                        <button class="w-100 py-2 mb-2 btn btn-outline-dark rounded-3" type="submit">
-                            <svg class="bi me-1" width="16" height="16"><use xlink:href="#twitter"></use></svg>
-                            Sign up with Twitter
-                        </button>
-                        <button class="w-100 py-2 mb-2 btn btn-outline-primary rounded-3" type="submit">
-                            <svg class="bi me-1" width="16" height="16"><use xlink:href="#facebook"></use></svg>
-                            Sign up with Facebook
-                        </button>
-                        <button class="w-100 py-2 mb-2 btn btn-outline-secondary rounded-3" type="submit">
-                            <svg class="bi me-1" width="16" height="16"><use xlink:href="#github"></use></svg>
-                            Sign up with GitHub
-                        </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="container my-3">
-            <div class="row">
-                <div class="col-md-8 col-lg-9", id="main-area">
-                {% if post_list.exists %}
-                    {% for p in post_list %}
-                    <div class="card mb-4">
-                        {% if p.head_image %}
-                        <a href="#!"><img class="card-img-top" src="{{ p.head_image.url }}" alt="{{ p }} head image"></a>
-                        {% else %}
-                        <a href="#!"><img class="card-img-top" src="https:/picsum.photos/seed/{{ p.id }}/800/200" alt="{{ p }} head image"></a>
-                        {% endif %}
-                        <div class="card-body">
-                            <div class="small text-muted">{{ p.created_at }} by Author</div>
-                            <h2 class="card-title">{{ p.title }}</h2>
-                            {% if p.subtitle %}
-                                <h5 class="text-muted">{{ p.subtitle }}</h5>
-                            {% endif %}
-                            <p class="card-text">{{ p.content | truncatewords:40 }}</p>
-                            <a class="btn btn-primary" href="{{ p.get_absolute_url }}">Read more →</a>
-                        </div>
-                    </div>
-                    {% endfor %}
+    {% block main_area %}
+        {% if post_list.exists %}
+            {% for p in post_list %}
+            <div class="card mb-4">
+                {% if p.head_image %}
+                <a href="#!"><img class="card-img-top" src="{{ p.head_image.url }}" alt="{{ p }} head image"></a>
                 {% else %}
-                    <h3>아직 게시물이 없습니다.</h3>
+                <a href="#!"><img class="card-img-top" src="https:/picsum.photos/seed/{{ p.id }}/800/200" alt="{{ p }} head image"></a>
                 {% endif %}
-                </div>
-                <div class="col-md-4 col-lg-3">
-                    <!-- Search widget-->
-                    <div class="card mb-4">
-                        <div class="card-header">Search</div>
-                        <div class="card-body">
-                            <div class="input-group">
-                                <input class="form-control" type="text" placeholder="Enter search term..." aria-label="Enter search term..." aria-describedby="button-search">
-                                <button class="btn btn-primary" id="button-search" type="button">Go!</button>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Categories widget-->
-                    <div class="card mb-4">
-                        <div class="card-header">Categories</div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <ul class="list-unstyled mb-0">
-                                        <li><a href="#!">Web Design</a></li>
-                                        <li><a href="#!">HTML</a></li>
-                                        <li><a href="#!">Freebies</a></li>
-                                    </ul>
-                                </div>
-                                <div class="col-sm-6">
-                                    <ul class="list-unstyled mb-0">
-                                        <li><a href="#!">JavaScript</a></li>
-                                        <li><a href="#!">CSS</a></li>
-                                        <li><a href="#!">Tutorials</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Side widget-->
-                    <div class="card mb-4">
-                        <div class="card-header">Side Widget</div>
-                        <div class="card-body">You can put anything you want inside of these side widgets. They are easy to use, and feature the Bootstrap 5 card component!</div>
-                    </div>
+                <div class="card-body">
+                    <div class="small text-muted">{{ p.created_at }} by Author</div>
+                    <h2 class="card-title">{{ p.title }}</h2>
+                    {% if p.subtitle %}
+                        <h5 class="text-muted">{{ p.subtitle }}</h5>
+                    {% endif %}
+                    <p class="card-text">{{ p.content | truncatewords:40 }}</p>
+                    <a class="btn btn-primary" href="{{ p.get_absolute_url }}">Read more →</a>
                 </div>
             </div>
-        </div>
-        
-        <nav aria-label="Pagination">
-            <hr class="my-0">
-            <ul class="pagination justify-content-center my-4">
-                <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1" aria-disabled="true">Newer</a></li>
-                <li class="page-item active" aria-current="page"><a class="page-link" href="#!">1</a></li>
-                <li class="page-item"><a class="page-link" href="#!">2</a></li>
-                <li class="page-item"><a class="page-link" href="#!">3</a></li>
-                <li class="page-item disabled"><a class="page-link" href="#!">...</a></li>
-                <li class="page-item"><a class="page-link" href="#!">15</a></li>
-                <li class="page-item"><a class="page-link" href="#!">Older</a></li>
-            </ul>
-        </nav>
-
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
-        
-        <footer class="py-5 bg-dark">
-            <div class="container"><p class="m-0 text-center text-white">Copyright © Your Website 2023</p></div>
-        </footer>
-    </body>
+            {% endfor %}
+        {% else %}
+            <h3>아직 게시물이 없습니다.</h3>
+        {% endif %}
+    {% endblock %}
 </html>
