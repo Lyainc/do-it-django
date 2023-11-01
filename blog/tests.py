@@ -80,11 +80,11 @@ class TestView(TestCase):
         self.assertIn(post_001.title, soup.title.text)
         
         # 2.4 첫번째 포스트의 제목이 포스트 영역에 있다.
-        main_area = soup.find('div', id='main_area')
-        post_area = main_area.find('div', id='post_area')
+        main_area = soup.find('div', id='main-area')
+        post_area = main_area.find('article', id='post-area')
         self.assertIn(post_001.title, post_area.text)
                 
         # 2.5 첫번째 포스트의 작성자(Author)가 있다.
     
         # 2.6 첫번째 포스트의 내용(Content)가 있다.
-        sefl.assertIn(post_001.content, post_area.text)
+        self.assertIn(post_001.content, post_area.text)

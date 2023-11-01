@@ -1,29 +1,27 @@
-<!DOCTYPE html>
 {% extends 'blog/base.html' %}
 {% load static %}
-<html lang="ko">
-    {% block main_area %}
-        {% if post_list.exists %}
-            {% for p in post_list %}
-            <div class="card mb-4">
-                {% if p.head_image %}
-                <a href="#!"><img class="card-img-top" src="{{ p.head_image.url }}" alt="{{ p }} head image"></a>
-                {% else %}
-                <a href="#!"><img class="card-img-top" src="https:/picsum.photos/seed/{{ p.id }}/800/200" alt="{{ p }} head image"></a>
+
+{% block main_area %}
+    {% if post_list.exists %}
+        {% for p in post_list %}
+        <div class="card mb-4">
+            {% if p.head_image %}
+            <a href="#!"><img class="card-img-top" src="{{ p.head_image.url }}" alt="{{ p }} head image"></a>
+            {% else %}
+            <a href="#!"><img class="card-img-top" src="https:/picsum.photos/seed/{{ p.id }}/800/200" alt="{{ p }} head image"></a>
+            {% endif %}
+            <div class="card-body">
+                <div class="small text-muted">{{ p.created_at }} by Author</div>
+                <h2 class="card-title">{{ p.title }}</h2>
+                {% if p.subtitle %}
+                    <h5 class="text-muted">{{ p.subtitle }}</h5>
                 {% endif %}
-                <div class="card-body">
-                    <div class="small text-muted">{{ p.created_at }} by Author</div>
-                    <h2 class="card-title">{{ p.title }}</h2>
-                    {% if p.subtitle %}
-                        <h5 class="text-muted">{{ p.subtitle }}</h5>
-                    {% endif %}
-                    <p class="card-text">{{ p.content | truncatewords:40 }}</p>
-                    <a class="btn btn-primary" href="{{ p.get_absolute_url }}">Read more →</a>
-                </div>
+                <p class="card-text">{{ p.content | truncatewords:40 }}</p>
+                <a class="btn btn-primary" href="{{ p.get_absolute_url }}">Read more →</a>
             </div>
-            {% endfor %}
-        {% else %}
-            <h3>아직 게시물이 없습니다.</h3>
-        {% endif %}
-    {% endblock %}
-</html>
+        </div>
+        {% endfor %}
+    {% else %}
+        <h3>아직 게시물이 없습니다.</h3>
+    {% endif %}
+{% endblock %}
