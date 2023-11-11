@@ -3,7 +3,7 @@
 {% block main_area %}
     {% if post_list.exists %}
         {% for p in post_list %}
-        <div class="card mb-4">
+        <div class="card mb-4" id="post-{{ p.pk }}">
             {% if p.head_image %}
             <a href="#!"><img class="card-img-top" src="{{ p.head_image.url }}" alt="{{ p }} head image"></a>
             {% else %}
@@ -15,8 +15,9 @@
                 {% if p.subtitle %}
                     <h5 class="text-muted">{{ p.subtitle }}</h5>
                 {% endif %}
+                <h3 class="badge text-bg-secondary rounded-pill">{{ p.category }}</h3>
                 <p class="card-text">{{ p.content | truncatewords:40 }}</p>
-                <a class="btn btn-primary" href="{{ p.get_absolute_url }}">Read more →</a>
+                <a class="btn btn-primary float-end" href="{{ p.get_absolute_url }}">Read more →</a>
             </div>
         </div>
         {% endfor %}
