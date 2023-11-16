@@ -57,10 +57,10 @@ class TestView(TestCase):
         self.assertIn(self.user_beta.username, main_area.text)
         
         # 포스트가 없는 경우
-        Post.objects.all.delete()
+        Post.objects.all().delete()
         self.assertEqual(Post.objects.count(), 0)
         
-        response = self.clinet.get('/blog/')
+        response = self.client.get('/blog/')
         self.assertEqual(response.status_code, 200)
         soup = BeautifulSoup(response.content, 'html.parser')
                 
