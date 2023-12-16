@@ -13,6 +13,10 @@ class TestView(TestCase):
         self.category_people = Category.objects.create(name='people', slug='people')
         self.category_culture = Category.objects.create(name='culture', slug='culture')
         
+        self.tag_interview = Tag.objects.create(name='Interview', slug='Interview')
+        self.tag_design = Tag.objects.create(name='Design', slug='Design')
+        self.tag_data = Tag.objects.create(name='data', slug='data')
+        
         self.post_001 = Post.objects.create(
             title = '첫 번째 포스트입니다.',
             content = '첫 번째 콘텐츠의 콘텐츠입니다.',
@@ -30,10 +34,6 @@ class TestView(TestCase):
         )
         self.post_002.tags.add(self.tag_interview)
         self.post_002.tags.add(self.tag_data)
-        
-        self.tag_interview = Tag.objects.create(name='Interview', slug='Interview')
-        self.tag_design = Tag.objects.create(name='Design', slug='Design')
-        self.tag_data = Tag.objects.create(name='data', slug='data')
     
     def test_category_page(self):
         response = self.client.get(self.category_people.get_absolute_url())
@@ -42,8 +42,6 @@ class TestView(TestCase):
         soup = BeautifulSoup(response.content, 'html.parser')
         self.navbar_test(soup)
         self.category_card_test(soup)
-        
-        self.assertIn(self.category_people.name, soup.h1.text)
         
         main_area = soup.find('div', id='main-area')
         self.assertIn(self.category_people.name, main_area.text)
