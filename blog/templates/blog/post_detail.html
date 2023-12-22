@@ -26,6 +26,14 @@
             <!-- Post content-->
             <section class="mb-5">
                 <p> {{ post.content }} </p>
+                {% if post.tags.exist %}
+                    <i class="fas fa-solid fa-tags"></i>
+                    {% for tag in p.tags.all %}
+                        <a href="{{ tag.get_absolute_url }}"><span class="badge bg-dark-subtle text-dark-emphasis rounded-pill">{{ tag }}</span></a>
+                    {% endfor %}
+                    </br>
+                    </br>
+                {% endif %}
                 {% if post.file_upload %}
                 <a href="{{ post.file_upload.url }}">
                     <button class="btn btn-primary d-inline-flex align-items-center" type="button">
