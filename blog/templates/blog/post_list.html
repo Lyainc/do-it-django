@@ -1,14 +1,15 @@
 {% extends 'blog/base.html' %}
 {% load static %}
 {% block main_area %}
-    <h1>Blog {% if category %} - {{ category }} {% endif %}</h1>
+    <h1 class="text-muted">{% if category %} <i>Category: {{ category }}</i><br>{% endif %}</h1>
+    <h1 class="text-muted">{% if tag %} <i>tag: #{{ tag }}</i>{% endif %}</h1>
     {% if post_list.exists %}
         {% for p in post_list %}
         <div class="card mb-4" id="post-{{ p.pk }}">
             {% if p.head_image %}
-            <a href="#!"><img class="card-img-top" src="{{ p.head_image.url }}" alt="{{ p }} head image"></a>
+            <a href="{{ p.get_absolute_url }}"><img class="card-img-top" src="{{ p.head_image.url }}" alt="{{ p }} head image"></a>
             {% else %}
-            <a href="#!"><img class="card-img-top" src="https:/picsum.photos/seed/{{ p.id }}/800/200" alt="{{ p }} head image"></a>
+            <a href="{{ p.get_absolute_url }}"><img class="card-img-top" src="https:/picsum.photos/seed/{{ p.id }}/800/200" alt="{{ p }} head image"></a>
             {% endif %}
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">

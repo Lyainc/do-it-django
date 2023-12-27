@@ -35,6 +35,21 @@ class TestView(TestCase):
         self.post_002.tags.add(self.tag_interview)
         self.post_002.tags.add(self.tag_data)
     
+    def test_tag_page(self):
+        response = self.client.get(self.tag_interview.get_absolute_url())
+        self.assertEqual(response.status_code, 200)
+        soup = BeautifulSoup(response.content, 'html.parser')
+
+        self.navbar_test(soup)
+        self.category_card_test(soup)
+
+        self.assertIn(self.tag_interview, soup.h1.text)
+
+        main_area = soup.find('div', id='main-area')
+        self.assertIn(self.tag_interview.name, main_area.text)
+        self.assertIn(self.post_001.title, main_area.text)
+        self.assertIn(self.post_002.title, main_area.text)
+        
     def test_category_page(self):
         response = self.client.get(self.category_people.get_absolute_url())
         self.assertEqual(response.status_code, 200)
@@ -119,6 +134,10 @@ class TestView(TestCase):
     
         # 2.6 첫번째 포스트의 내용(Content)가 있다.
         self.assertIn(self.post_001.content, post_area.text)
+        
+        # 2.7 포스트의 태그가 있다
+        self.assertIn(self.tag_interview.name, post_area.text)
+        self.assertIn(self.tag_design.name, post_area.text)
         
     def navbar_test(self, soup):
         navbar = soup.nav
