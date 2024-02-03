@@ -149,11 +149,11 @@ class TestView(TestCase):
         self.assertIn(self.tag_design.name, post_area.text)
         
     def navbar_test(self, soup):
-        navbar = soup.nav
+        navbar = soup.header
         self.assertIn('Blog', navbar.text)
         self.assertIn('About Me', navbar.text)
     
-        logo_btn = navbar.find('a', text="Blog Test Page")
+        logo_btn = navbar.find('a', text="My Blog Page")
         self.assertEqual(logo_btn.attrs['href'], '/')
         
         home_btn = navbar.find('a', text="Home")
