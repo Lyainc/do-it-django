@@ -37,12 +37,31 @@ class TestView(TestCase):
     
     def test_create_post(self):
         response = self.client.get('/blog/create_post/')
+        self.assertNotEqual(response.status_code, 200)
+        
+        self.client.login(username='alpha', password='alpha1')
+        
+        response = self.client.get('/blog/create_post/')
         self.assertEqual(response.status_code, 200)
         soup = BeautifulSoup(response.content, 'html.parser')
-        
+
         self.assertEqual('Create Post - Blog', soup.title.text)
         main_area = soup.find('div', id='main-area')
         self.assertIn('Create New Post', main_area.text)
+        
+        self.client.post(
+            '/blog/create_post/',
+            {
+                'title': 'Post Test',
+                'content': "Post Form Test",
+            }
+        )
+        
+        last_post = Post.objects.last()
+        self.assertEqual(last_post.title, 'Post Test')
+        self.assertEqual(last_post.author.username, 'alpha')
+
+
     
     def test_tag_page(self):
         response = self.client.get(self.tag_interview.get_absolute_url())

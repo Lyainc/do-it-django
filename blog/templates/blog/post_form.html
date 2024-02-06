@@ -1,4 +1,4 @@
-{% extends "blog/base.html" %}
+{% extends "blog/base_full_width.html" %}
 
 {% block head_title %}Create Post - Blog{% endblock %}
 
@@ -9,9 +9,8 @@
         <table>
             {{ form }}
         </table>
-        <button class="btn btn-primary d-inline-flex align-items-center" type="button">
+        <button class="btn btn-primary d-inline-flex align-items-center" type="submit">
             Submit
-            <svg class="bi ms-1" width="20" height="20"><use xlink:href="#arrow-right-short"></use></svg>
           </button>
     </form>
     
