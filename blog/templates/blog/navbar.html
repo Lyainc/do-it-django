@@ -9,8 +9,12 @@
         <header class="p-3 mb-3 border-bottom">
             <div class="container">
               <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
-                    <img class="bi me-2" src="https://raw.githubusercontent.com/Lyainc/do-it-django/main/blog/static/blog/perspective_7404815.png" width="40" heigth="32"/>
+                {% if user.is_authenticated %}
+                  {% if user.is_superuser or user.is_staff %}
+                  <a href="/blog/create_post/" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
+                  {% endif %}
+                {% endif %}
+                  <img class="bi me-2" src="https://raw.githubusercontent.com/Lyainc/do-it-django/main/blog/static/blog/perspective_7404815.png" width="40" heigth="32"/>
                 </a>
                 <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
                   <li><a href="/" class="nav-link px-2 link-secondary">My Blog Page</a></li>
@@ -26,3 +30,4 @@
           </header>
     </body>
 </html>
+

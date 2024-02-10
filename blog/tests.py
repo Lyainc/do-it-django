@@ -7,8 +7,14 @@ from .models import Post, Category, Tag
 class TestView(TestCase):
     def setUp(self):
         self.client = Client()
-        self.user_alpha = User.objects.create_user(username='alpha', password='alpha1')
-        self.user_beta = User.objects.create_user(username='beta', password='beta1')
+        self.user_alpha = User.objects.create_user(username='alpha')
+        self.user_alpha.set_password('alpha1')
+        self.user_alpha.save()
+
+        self.user_beta = User.objects.create_user(username='beta')
+        self.user_beta.set_password('beta1')
+        self.user_beta.is_staff = True
+        self.user_beta.save()
         
         self.category_people = Category.objects.create(name='people', slug='people')
         self.category_culture = Category.objects.create(name='culture', slug='culture')
@@ -40,26 +46,31 @@ class TestView(TestCase):
         self.assertNotEqual(response.status_code, 200)
         
         self.client.login(username='alpha', password='alpha1')
-        
         response = self.client.get('/blog/create_post/')
-        self.assertEqual(response.status_code, 200)
+        self.assertNotEqual(response.status_code, 200)
+
+        self.client.login(username='beta', password='beta1') 
+        response = self.client.get('/blog/create_post/')
+        self.assertEqual(response.status_code, 200)       
         soup = BeautifulSoup(response.content, 'html.parser')
 
         self.assertEqual('Create Post - Blog', soup.title.text)
         main_area = soup.find('div', id='main-area')
         self.assertIn('Create New Post', main_area.text)
         
-        self.client.post(
+        response = self.client.post(
             '/blog/create_post/',
             {
                 'title': 'Post Test',
+                'subtitle': 'Test',
                 'content': "Post Form Test",
+                'category': 'People'
             }
         )
-        
+        self.assertEqual(response.status_code, 302)
         last_post = Post.objects.last()
         self.assertEqual(last_post.title, 'Post Test')
-        self.assertEqual(last_post.author.username, 'alpha')
+        self.assertEqual(last_post.author.username, 'beta')
 
 
     
