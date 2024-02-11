@@ -41,38 +41,6 @@ class TestView(TestCase):
         self.post_002.tags.add(self.tag_interview)
         self.post_002.tags.add(self.tag_data)
     
-    def test_create_post(self):
-        response = self.client.get('/blog/create_post/')
-        self.assertNotEqual(response.status_code, 200)
-        
-        self.client.login(username='alpha', password='alpha1')
-        response = self.client.get('/blog/create_post/')
-        self.assertNotEqual(response.status_code, 200)
-
-        self.client.login(username='beta', password='beta1') 
-        response = self.client.get('/blog/create_post/')
-        self.assertEqual(response.status_code, 200)       
-        soup = BeautifulSoup(response.content, 'html.parser')
-
-        self.assertEqual('Create Post - Blog', soup.title.text)
-        main_area = soup.find('div', id='main-area')
-        self.assertIn('Create New Post', main_area.text)
-        
-        response = self.client.post(
-            '/blog/create_post/',
-            {
-                'title': 'Post Test',
-                'subtitle': 'Test',
-                'content': "Post Form Test",
-                'category': 'People'
-            }
-        )
-        self.assertEqual(response.status_code, 302)
-        last_post = Post.objects.last()
-        self.assertEqual(last_post.title, 'Post Test')
-        self.assertEqual(last_post.author.username, 'beta')
-
-
     
     def test_tag_page(self):
         response = self.client.get(self.tag_interview.get_absolute_url())
@@ -81,8 +49,6 @@ class TestView(TestCase):
 
         self.navbar_test(soup)
         self.category_card_test(soup)
-        
-        # self.assertIn(self.tag_interview.name, soup.h1.text)
 
         main_area = soup.find('div', id='main-area')
         self.assertIn(self.post_001.title, main_area.text)
@@ -194,3 +160,77 @@ class TestView(TestCase):
         
         about_me_btn = navbar.find('a', text="About Me")
         self.assertEqual(about_me_btn.attrs['href'], '/about_me/')
+        
+    def test_create_post(self):
+        response = self.client.get('/blog/create_post/')
+        self.assertNotEqual(response.status_code, 200)
+        
+        self.client.login(username='alpha', password='alpha1')
+        response = self.client.get('/blog/create_post/')
+        self.assertNotEqual(response.status_code, 200)
+
+        self.client.login(username='beta', password='beta1') 
+        response = self.client.get('/blog/create_post/')
+        self.assertEqual(response.status_code, 200)       
+        soup = BeautifulSoup(response.content, 'html.parser')
+
+        self.assertEqual('Create Post - Blog', soup.title.text)
+        main_area = soup.find('div', id='main-area')
+        self.assertIn('Create New Post', main_area.text)
+        
+        response = self.client.post(
+            '/blog/create_post/',
+            {
+                'title': 'Post Test',
+                'subtitle': 'Test',
+                'content': "Post Form Test",
+                'category': 'People'
+            },
+            follow=True
+        )
+
+        last_post = Post.objects.last()
+        self.assertEqual(last_post.title, 'Post Test')
+        self.assertEqual(last_post.author.username, 'beta')
+        
+    def test_update_post(self):
+        update_post_url = f'/blog/update_post/{self.post_002.pk}/'
+
+        response = self.client.get(update_post_url)
+        self.assertNotEqual(response.status_code, 200)
+
+        self.assertNotEqual(self.post_002.author, self.user_alpha)
+        self.client.login(
+            username=self.user_alpha.username,
+            password='alpha1'
+        )
+        response = self.client.get(update_post_url)
+        self.assertEqual(response.status_code, 403)
+
+        self.client.login(
+            username=self.user_beta,
+            password='beta1'
+        )
+        response = self.client.get(update_post_url)
+        self.assertEqual(response.status_code, 200)
+        soup = BeautifulSoup(response.content, 'html.parser')        
+
+        self.assertEqual('Edit Post - Blog', soup.title.text)
+        main_area = soup.find('div', id='main-area')
+        self.assertIn('Edit Post', main_area.text)
+
+        response = self.client.post(
+            update_post_url,
+            {
+                'title': '두 번째 포스트를 수정합니다.',
+                'content': '수정된 콘텐츠 내용입니다.',
+                'category': self.category_people.pk
+            },
+            follow=True
+        )
+        
+        soup = BeautifulSoup(response.content, 'html.parser')
+        main_area = soup.find('div', id='main-area')
+        self.assertIn('두 번째 포스트를 수정합니다.', main_area.text)
+        self.assertIn('수정된 콘텐츠 내용입니다.', main_area.text)
+        self.assertIn(self.category_people.name, main_area.text)

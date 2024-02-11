@@ -10,7 +10,14 @@
             <!-- Post header-->
             <header class="mb-4">
                 <!-- Post title-->
-                <h1 class="fw-bolder mb-1">{{ post.title }}</h1>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h1 class="fw-bolder mb-1">{{ post.title }}</h1>
+                    {% if user.is_authenticated and user == post.author %}"
+                        <a class="btn btn-primary d-inline-flex align-items-center" href="/blog/update_post/{{ post.pk }}/" type="submit">
+                        <i>Edit Post</i>
+                        </a>
+                    {% endif %}
+                </div>
                 <h5 class="text-muted">{{ post.subtitle }}</h5>
                 <!-- Post meta content-->
                 <div class="text-muted fst-italic mb-2">Posted on {{ post.created_at }}, by {{ post.author }}</div>
