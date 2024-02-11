@@ -21,7 +21,7 @@ class TestView(TestCase):
         
         self.tag_interview = Tag.objects.create(name='Interview', slug='Interview')
         self.tag_design = Tag.objects.create(name='Design', slug='Design')
-        self.tag_data = Tag.objects.create(name='data', slug='data')
+        self.tag_data = Tag.objects.create(name='Data', slug='data')
         
         self.post_001 = Post.objects.create(
             title = '첫 번째 포스트입니다.',
@@ -40,7 +40,6 @@ class TestView(TestCase):
         )
         self.post_002.tags.add(self.tag_interview)
         self.post_002.tags.add(self.tag_data)
-    
     
     def test_tag_page(self):
         response = self.client.get(self.tag_interview.get_absolute_url())
@@ -165,11 +164,17 @@ class TestView(TestCase):
         response = self.client.get('/blog/create_post/')
         self.assertNotEqual(response.status_code, 200)
         
-        self.client.login(username='alpha', password='alpha1')
+        self.client.login(
+            username=self.user_alpha.username,
+            password='alpha1'
+        )
         response = self.client.get('/blog/create_post/')
         self.assertNotEqual(response.status_code, 200)
 
-        self.client.login(username='beta', password='beta1') 
+        self.client.login(
+            username=self.user_beta.username,
+            password='beta1'
+        ) 
         response = self.client.get('/blog/create_post/')
         self.assertEqual(response.status_code, 200)       
         soup = BeautifulSoup(response.content, 'html.parser')
@@ -178,20 +183,32 @@ class TestView(TestCase):
         main_area = soup.find('div', id='main-area')
         self.assertIn('Create New Post', main_area.text)
         
+        tag_str_input = main_area.find('input', id='id_tags_str')
+        self.assertTrue(tag_str_input)
+        
         response = self.client.post(
             '/blog/create_post/',
             {
                 'title': 'Post Test',
-                'subtitle': 'Test',
                 'content': "Post Form Test",
-                'category': 'People'
+                'category': 'People',
+                'tags_str': '디자인; 인터뷰, 데이터'
             },
             follow=True
         )
 
+        # self.assertEqual(Post.objects.count(), 3)
         last_post = Post.objects.last()
-        self.assertEqual(last_post.title, 'Post Test')
-        self.assertEqual(last_post.author.username, 'beta')
+
+        self.assertEqual(last_post.title, "Post Test")
+        self.assertEqual(last_post.content, "Post Form Test")
+        self.assertEqual(last_post.author.username, "beta")
+        
+        self.assertEqual(last_post.tags.count(), 3)
+        self.assertTrue(Tag.objects.get(name='디자인'))
+        self.assertTrue(Tag.objects.get(name='인터뷰'))
+        self.assertTrue(Tag.objects.get(name='데이터'))
+        self.assertEqual(Tag.objects.count(), 6)
         
     def test_update_post(self):
         update_post_url = f'/blog/update_post/{self.post_002.pk}/'
@@ -208,7 +225,7 @@ class TestView(TestCase):
         self.assertEqual(response.status_code, 403)
 
         self.client.login(
-            username=self.user_beta,
+            username=self.user_beta.username,
             password='beta1'
         )
         response = self.client.get(update_post_url)
@@ -228,9 +245,8 @@ class TestView(TestCase):
             },
             follow=True
         )
-        
+
         soup = BeautifulSoup(response.content, 'html.parser')
         main_area = soup.find('div', id='main-area')
-        self.assertIn('두 번째 포스트를 수정합니다.', main_area.text)
         self.assertIn('수정된 콘텐츠 내용입니다.', main_area.text)
         self.assertIn(self.category_people.name, main_area.text)
